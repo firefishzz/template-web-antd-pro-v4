@@ -47,9 +47,9 @@ const UserLayout: React.FC<UserLayoutProps> = (props) => {
           <img alt="logo" src={logo} />
         </div>
         <div className={styles.loginContent}>
-          <div className={styles.langWrap}>
+          {/* <div className={styles.langWrap}>
             <SelectLang />
-          </div>
+          </div> */}
           {children}
         </div>
       </div>
