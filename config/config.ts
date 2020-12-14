@@ -33,6 +33,9 @@ export default defineConfig({
   // Theme for antd: https://ant.design/docs/react/customize-theme-cn
   theme: {
     'primary-color': defaultSettings.primaryColor,
+    'btn-primary-bg': '#dc1320',
+    'btn-default-color': '#dc1320',
+    'btn-default-border': '#dc1320',
   },
   title: false,
   ignoreMomentLocale: true,

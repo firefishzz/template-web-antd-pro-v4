@@ -1,10 +1,5 @@
 ﻿export default [
   {
-    name: 'login',
-    path: '/login',
-    component: './Login',
-  },
-  {
     path: '/user',
     component: '../layouts/UserLayout',
     routes: [
@@ -26,13 +21,20 @@
         routes: [
           {
             path: '/',
-            redirect: '/welcome',
+            redirect: '/boc/verification',
           },
           {
-            path: '/welcome',
-            name: 'welcome',
+            path: '/boc/verification',
+            name: '查询&核销',
             icon: 'smile',
-            component: './Welcome',
+            component: './boc/Verification',
+          },
+          {
+            path: '/boc/create-coupon',
+            name: '生成券码',
+            icon: 'smile',
+            authority: ['admin'],
+            component: './boc/CreateCoupon',
           },
           {
             path: '/admin',
