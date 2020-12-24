@@ -10,38 +10,23 @@ interface SecurityLayoutProps extends ConnectProps {
   currentUser?: CurrentUser
 }
 
-interface SecurityLayoutState {
-  isReady: boolean
-}
+interface SecurityLayoutState {}
 
 class SecurityLayout extends React.Component<SecurityLayoutProps, SecurityLayoutState> {
-  state: SecurityLayoutState = {
-    isReady: false
-  }
+  state: SecurityLayoutState = {}
 
-  componentDidMount() {
-    this.setState({
-      isReady: true
-    })
-    const { dispatch } = this.props
-    if (dispatch) {
-      dispatch({
-        type: 'user/fetchCurrent'
-      })
-    }
-  }
+  componentDidMount() {}
 
   render() {
-    const { isReady } = this.state
     const { children, loading, currentUser } = this.props
     // You can replace it to your authentication rule (such as check token exists)
     // 你可以把它替换成你自己的登录认证规则（比如判断 token 是否存在）
-    const isLogin = currentUser && currentUser.userid
+    const isLogin = currentUser && currentUser.userName
     const queryString = stringify({
       redirect: window.location.href
     })
 
-    if ((!isLogin && loading) || !isReady) {
+    if (!isLogin && loading) {
       return <PageLoading />
     }
     if (!isLogin && window.location.pathname !== '/user/login') {

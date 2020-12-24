@@ -7,24 +7,23 @@
  */
 export default {
   dev: {
-    '/api/': {
-      target: 'https://preview.pro.ant.design',
-      changeOrigin: true,
-      pathRewrite: { '^': '' },
-    },
+    '/plat': {
+      target: 'https://bocpx.ipay.so/',
+      changeOrigin: true
+    }
   },
   test: {
     '/api/': {
       target: 'https://preview.pro.ant.design',
       changeOrigin: true,
-      pathRewrite: { '^': '' },
-    },
+      pathRewrite: { '^': '' }
+    }
   },
   pre: {
     '/api/': {
       target: 'your pre url',
       changeOrigin: true,
-      pathRewrite: { '^': '' },
-    },
-  },
-};
+      pathRewrite: { '^': '' }
+    }
+  }
+}

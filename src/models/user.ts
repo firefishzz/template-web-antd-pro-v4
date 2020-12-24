@@ -1,85 +1,125 @@
-import { Effect, Reducer } from 'umi';
+import { history, Effect, Reducer } from 'umi'
+import { stringify } from 'querystring'
 
-import { queryCurrent, query as queryUsers } from '@/services/user';
+import { appLogin, appLogout } from '@/services/index'
+import { setAuthority } from '@/utils/authority'
+import { getPageQuery } from '@/utils/utils'
+import { message } from 'antd'
 
 export interface CurrentUser {
-  avatar?: string;
-  name?: string;
-  title?: string;
-  group?: string;
-  signature?: string;
-  tags?: {
-    key: string;
-    label: string;
-  }[];
-  userid?: string;
-  unreadCount?: number;
+  userName?: string
+  role?: 'in' | 'out'
 }
 
 export interface UserModelState {
-  currentUser?: CurrentUser;
+  currentUser?: CurrentUser
 }
 
 export interface UserModelType {
-  namespace: 'user';
-  state: UserModelState;
+  namespace: 'user'
+  state: UserModelState
   effects: {
-    fetch: Effect;
-    fetchCurrent: Effect;
-  };
+    login: Effect
+    logout: Effect
+  }
   reducers: {
-    saveCurrentUser: Reducer<UserModelState>;
-    changeNotifyCount: Reducer<UserModelState>;
-  };
+    saveCurrentUser: Reducer<UserModelState>
+    changeNotifyCount: Reducer<UserModelState>
+  }
+}
+
+let initCurrentUser = {}
+try {
+  initCurrentUser = JSON.parse(localStorage.getItem('userInfo') || '{}')
+} catch {
+  initCurrentUser = {}
 }
 
 const UserModel: UserModelType = {
   namespace: 'user',
 
   state: {
-    currentUser: {},
+    currentUser: initCurrentUser
   },
 
   effects: {
-    *fetch(_, { call, put }) {
-      const response = yield call(queryUsers);
-      yield put({
-        type: 'save',
-        payload: response,
-      });
+    *login({ payload }, { call, put }) {
+      const response = yield call(appLogin, payload)
+
+      const { code, msg, ...restRes } = response
+      if (code) {
+        message.error(msg)
+        return response
+      } else {
+        yield put({
+          type: 'saveCurrentUser',
+          payload: restRes
+        })
+
+        const urlParams = new URL(window.location.href)
+        const params = getPageQuery()
+        message.success('登录成功！')
+        let { redirect } = params as { redirect: string }
+
+        // if (redirect) {
+        //   const redirectUrlParams = new URL(redirect)
+        //   if (redirectUrlParams.origin === urlParams.origin) {
+        //     redirect = redirect.substr(urlParams.origin.length)
+        //     if (redirect.match(/^\/.*#/)) {
+        //       redirect = redirect.substr(redirect.indexOf('#') + 1)
+        //     }
+        //   } else {
+        //     window.location.href = '/'
+        //     return
+        //   }
+        // }
+        history.replace('/')
+      }
     },
-    *fetchCurrent(_, { call, put }) {
-      const response = yield call(queryCurrent);
-      yield put({
-        type: 'saveCurrentUser',
-        payload: response,
-      });
-    },
+    *logout({ payload }, { call, put }) {
+      const response = yield call(appLogout)
+      const { code, msg } = response
+
+      if (code === '16') {
+        localStorage.removeItem('userInfo')
+        // Note: There may be security issues, please note
+        history.replace({
+          pathname: '/user/login',
+          search: stringify({
+            redirect: window.location.href
+          })
+        })
+      } else {
+        message.error(msg)
+      }
+    }
   },
 
   reducers: {
     saveCurrentUser(state, action) {
+      localStorage.setItem('userInfo', JSON.stringify(action.payload))
+      setAuthority(action.payload.role)
       return {
         ...state,
-        currentUser: action.payload || {},
-      };
+        currentUser: action.payload || {}
+      }
     },
     changeNotifyCount(
       state = {
-        currentUser: {},
+        currentUser: {}
       },
-      action,
+      action
     ) {
       return {
         ...state,
         currentUser: {
           ...state.currentUser,
           notifyCount: action.payload.totalCount,
-          unreadCount: action.payload.unreadCount,
-        },
-      };
-    },
-  },
-};
+          unreadCount: action.payload.unreadCount
+        }
+      }
+    }
+  }
+}
 
-export default UserModel;
+export default UserModel

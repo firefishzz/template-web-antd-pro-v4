@@ -20,12 +20,14 @@
     "lint:style": "stylelint --fix \"src/**/*.less\" --syntax less",
     "precommit": "lint-staged",
     "prettier": "prettier -c --write \"src/**/*\"",
-    "start": "umi dev",
+    "start": "cross-env REACT_APP_CIL_ENV=local umi dev",
     "start:dev": "cross-env REACT_APP_ENV=dev MOCK=none umi dev",
     "start:no-mock": "cross-env MOCK=none umi dev",
     "start:no-ui": "cross-env UMI_UI=none umi dev",
     "start:pre": "cross-env REACT_APP_ENV=pre umi dev",
     "start:test": "cross-env REACT_APP_ENV=test MOCK=none umi dev",
+    "build-test": "cross-env REACT_APP_CIL_ENV=test umi build",
+    "build-prod": "cross-env REACT_APP_CIL_ENV=prod umi build",
     "pretest": "node ./tests/beforeTest",
     "test": "umi test",
     "test:all": "node ./tests/run-tests.js",
@@ -35,9 +37,15 @@
   "lint-staged": {
     "**/*.less": "stylelint --syntax less",
     "**/*.{js,jsx,ts,tsx}": "npm run lint-staged:js",
-    "**/*.{js,jsx,tsx,ts,less,md,json}": ["prettier --write"]
+    "**/*.{js,jsx,tsx,ts,less,md,json}": [
+      "prettier --write"
+    ]
   },
-  "browserslist": ["> 1%", "last 2 versions", "not ie <= 10"],
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 10"
+  ],
   "dependencies": {
     "@ant-design/icons": "^4.0.0",
     "@ant-design/pro-descriptions": "^1.0.19",
@@ -47,6 +55,7 @@
     "@umijs/route-utils": "^1.0.33",
     "antd": "^4.8.0",
     "classnames": "^2.2.6",
+    "jsencrypt": "^3.0.0-rc.1",
     "lodash": "^4.17.11",
     "moment": "^2.25.3",
     "omit.js": "^2.0.2",
@@ -93,7 +102,9 @@
     "stylelint": "^13.0.0",
     "typescript": "^4.0.3"
   },
-  "engines": { "node": ">=10.0.0" },
+  "engines": {
+    "node": ">=10.0.0"
+  },
   "checkFiles": [
     "src/**/*.js*",
     "src/**/*.ts*",
