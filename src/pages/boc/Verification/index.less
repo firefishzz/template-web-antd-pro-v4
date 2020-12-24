@@ -1,8 +1,23 @@
-@import '~antd/lib/style/themes/default.less';
-
-.pre {
-  margin: 12px 0;
-  padding: 12px 20px;
-  background: @input-bg;
-  box-shadow: @card-shadow;
+.verificationWrap {
+  min-height: calc(100vh - 230px);
+  display: flex;
+  justify-content: center;
+  padding-top: 100px;
+  .formWrap {
+    width: 400px;
+    .btnWrap {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      button {
+        min-width: 120px;
+      }
+      .queryBtn {
+      }
+      .verifBtn {
+        background: #ff9d25;
+        border-color: #ff9d25;
+      }
+    }
+  }
 }

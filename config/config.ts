@@ -6,8 +6,6 @@ import routes from './routes'
 
 const { REACT_APP_ENV, REACT_APP_CIL_ENV } = process.env
 
-console.log('defaultSettings', REACT_APP_CIL_ENV)
-
 export default defineConfig({
   hash: true,
   antd: {},

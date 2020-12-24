@@ -3,7 +3,7 @@ import { stringify } from 'querystring'
 
 import { appLogin, appLogout } from '@/services/index'
 import { setAuthority } from '@/utils/authority'
-import { getPageQuery } from '@/utils/utils'
+import { getPageQuery, frontRsaDecrypt, frontRsaEncrypt } from '@/utils/utils'
 import { message } from 'antd'
 
 export interface CurrentUser {
@@ -30,9 +30,18 @@ export interface UserModelType {
 
 let initCurrentUser = {}
 try {
-  initCurrentUser = JSON.parse(localStorage.getItem('userInfo') || '{}')
+  if (localStorage.getItem('userInfo')) {
+    const decryptUser = JSON.parse(frontRsaDecrypt(localStorage.getItem('userInfo')) || '{}')
+    const isDecryptSuccess = typeof decryptUser === 'object' && !!decryptUser.userName
+    if (isDecryptSuccess) {
+      initCurrentUser = decryptUser
+    } else {
+      localStorage.removeItem('userInfo')
+    }
+  }
 } catch {
   initCurrentUser = {}
+  localStorage.removeItem('userInfo')
 }
 
 const UserModel: UserModelType = {
@@ -79,17 +88,7 @@ const UserModel: UserModelType = {
     *logout({ payload }, { call, put }) {
       const response = yield call(appLogout)
       const { code, msg } = response
-
-      if (code === '16') {
-        localStorage.removeItem('userInfo')
-        // Note: There may be security issues, please note
-        history.replace({
-          pathname: '/user/login',
-          search: stringify({
-            redirect: window.location.href
-          })
-        })
-      } else {
+      if (code !== '16') {
         message.error(msg)
       }
     }
@@ -97,7 +96,7 @@ const UserModel: UserModelType = {
 
   reducers: {
     saveCurrentUser(state, action) {
-      localStorage.setItem('userInfo', JSON.stringify(action.payload))
+      localStorage.setItem('userInfo', frontRsaEncrypt(JSON.stringify(action.payload)))
       setAuthority(action.payload.role)
       return {
         ...state,

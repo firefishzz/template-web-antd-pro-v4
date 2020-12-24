@@ -7,6 +7,11 @@
         name: 'login',
         path: '/user/login',
         component: './user/login'
+      },
+      {
+        name: 'resetPassword',
+        path: '/user/resetPassword',
+        component: './user/resetPassword'
       }
     ]
   },
@@ -17,7 +22,6 @@
       {
         path: '/',
         component: '../layouts/BasicLayout',
-        authority: ['admin', 'user', 'in', 'out'],
         routes: [
           {
             path: '/',

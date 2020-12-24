@@ -1,6 +1,6 @@
 import { Input, Form, Button } from 'antd'
 import React, { useState, useRef } from 'react'
-import { connect, Dispatch, useIntl } from 'umi'
+import { connect, Dispatch, history } from 'umi'
 
 import { ConnectState } from '@/models/connect'
 import { LoginRequestParams } from '@/services/interface'
@@ -48,6 +48,10 @@ const Login: React.FC<LoginProps> = (props) => {
     console.log('getCurrentCaptcha', value)
     handleCaptchaToken(value.token)
   }
+
+  const toResetPassword = () => {
+    history.push('/user/resetPassword')
+  }
   return (
     <div className={styles.main}>
       <div className={styles.topWrap}>
@@ -55,12 +59,7 @@ const Login: React.FC<LoginProps> = (props) => {
       </div>
 
       <div className={styles.loginForm}>
-        <Form
-          name="basic"
-          initialValues={{ remember: true }}
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-        >
+        <Form name="basic" onFinish={onFinish} onFinishFailed={onFinishFailed}>
           <Form.Item name="userName" rules={[{ required: true, message: '请输入用户名' }]}>
             <Input placeholder="请输入用户名" />
           </Form.Item>
@@ -78,7 +77,7 @@ const Login: React.FC<LoginProps> = (props) => {
           </Form.Item>
 
           <div className={styles.extraWrap}>
-            <span>重置密码</span>
+            <span onClick={toResetPassword}>重置密码</span>
           </div>
 
           <Form.Item>

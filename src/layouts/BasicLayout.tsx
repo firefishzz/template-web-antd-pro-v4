@@ -17,7 +17,7 @@ import Authorized from '@/utils/Authorized'
 import RightContent from '@/components/GlobalHeader/RightContent'
 import { ConnectState } from '@/models/connect'
 import { getMatchMenu } from '@umijs/route-utils'
-import logo from '../assets/logo.svg'
+import logoEnWhite from '../assets/logo_en_white.png'
 
 const noMatch = (
   <Result
@@ -97,7 +97,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
 
   return (
     <ProLayout
-      logo={logo}
+      logo={logoEnWhite}
       formatMessage={formatMessage}
       {...props}
       {...settings}

@@ -2,8 +2,10 @@
  * request 网络请求工具
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
-import { extend } from 'umi-request';
-import { notification } from 'antd';
+import { extend, RequestOptionsInit } from 'umi-request'
+import { notification } from 'antd'
+import { history } from 'umi'
+import { stringify } from 'querystring'
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -20,37 +22,60 @@ const codeMessage = {
   500: '服务器发生错误，请检查服务器。',
   502: '网关错误。',
   503: '服务不可用，服务器暂时过载或维护。',
-  504: '网关超时。',
-};
+  504: '网关超时。'
+}
+
+// status为200 响应拦截
+const responseInterCeptors = async (response: Response, options: RequestOptionsInit) => {
+  const data = await response.clone().json()
+  const { code, msg } = data
+  console.log('responseInterCeptors', response, data)
+  switch (code) {
+    case '16':
+      localStorage.removeItem('userInfo')
+      history.replace({
+        pathname: '/user/login',
+        search: stringify({
+          redirect: window.location.href
+        })
+      })
+      return response
+
+    default:
+      return response
+  }
+}
 
 /**
  * 异常处理程序
  */
 const errorHandler = (error: { response: Response }): Response => {
-  const { response } = error;
+  const { response } = error
+  console.log('errorHandler', response)
+
   if (response && response.status) {
-    const errorText = codeMessage[response.status] || response.statusText;
-    const { status, url } = response;
+    const errorText = codeMessage[response.status] || response.statusText
+    const { status, url } = response
 
     notification.error({
       message: `请求错误 ${status}: ${url}`,
-      description: errorText,
-    });
+      description: errorText
+    })
   } else if (!response) {
     notification.error({
       description: '您的网络发生异常，无法连接服务器',
-      message: '网络异常',
-    });
+      message: '网络异常'
+    })
   }
-  return response;
-};
+  return response
+}
 
 /**
  * 配置request请求时的默认参数
  */
 const request = extend({
   errorHandler, // 默认错误处理
-  credentials: 'include', // 默认请求是否带上cookie
-});
-
-export default request;
+  credentials: 'include' // 默认请求是否带上cookie
+})
+request.interceptors.response.use(responseInterCeptors)
+export default request

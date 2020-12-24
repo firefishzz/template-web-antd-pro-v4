@@ -4,3 +4,13 @@ export interface LoginRequestParams {
   captcha: string
   token: string
 }
+
+export interface VerificationRequestParams {
+  code: string
+}
+
+export interface ResetPasswordRequestParams {
+  userName: string
+  oldPwd: string
+  newPwd: string
+}
