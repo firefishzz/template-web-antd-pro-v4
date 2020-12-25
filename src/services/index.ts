@@ -2,7 +2,10 @@ import request from '@/utils/request'
 import {
   LoginRequestParams,
   VerificationRequestParams,
-  ResetPasswordRequestParams
+  ResetPasswordRequestParams,
+  VerifiCompleteReq,
+  QueryMerchantReq,
+  AddCouponReq
 } from './interface'
 
 export async function getCaptchaUrl() {
@@ -34,6 +37,27 @@ export async function appLogout() {
 export async function verificationQuery(params: VerificationRequestParams) {
   return request('/plat/query', {
     method: 'GET',
+    params: params
+  })
+}
+
+export async function verificationComplete(params: VerifiCompleteReq) {
+  return request('/plat/complete', {
+    method: 'GET',
+    params: params
+  })
+}
+
+export async function queryMerchant(params: QueryMerchantReq) {
+  return request('/plat/getMerchant', {
+    method: 'GET',
+    params: params
+  })
+}
+
+export async function addCoupon(params: AddCouponReq) {
+  return request('/plat/addCoupon', {
+    method: 'POST',
     data: params
   })
 }
