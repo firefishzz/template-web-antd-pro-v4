@@ -51,20 +51,27 @@ const Verification: React.FC<any> = (props) => {
       message.warning('请选择核销商品')
       return
     }
-    const param: VerifiCompleteReq = {
-      code: form.getFieldValue('code'),
-      itemNo: currentCouponNo
-    }
-    verificationComplete(param).then((res) => {
-      const { msg, code } = res
-      if (code === '00') {
-        message.success('核销成功')
-        handleConfirmCancel()
-      } else {
-        message.error(msg)
+
+    handleConfirmCancel()
+
+    Modal.confirm({
+      content: '是否核销当前券码？',
+      onOk: (close) => {
+        const param: VerifiCompleteReq = {
+          code: form.getFieldValue('code'),
+          itemNo: currentCouponNo
+        }
+        verificationComplete(param).then((res) => {
+          const { msg, code } = res
+          if (code === '00') {
+            message.success('核销成功')
+            close()
+          } else {
+            message.error(msg)
+          }
+        })
       }
     })
-    console.log('handleConfirmOk')
   }
   const handleConfirmCancel = () => {
     setConfirmVisible(false)

@@ -8,8 +8,8 @@
 export default {
   dev: {
     '/plat': {
-      // target: 'https://bocpx.ipay.so/',
-      target: 'http://192.168.17.29:8000',
+      target: 'https://bocpx.ipay.so/',
+      // target: 'http://192.168.17.29:8000',
       changeOrigin: true
     }
   },
