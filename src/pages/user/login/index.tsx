@@ -1,6 +1,6 @@
 import { Input, Form, Button } from 'antd'
 import React, { useState, useRef } from 'react'
-import { connect, Dispatch, history } from 'umi'
+import { connect, Dispatch, history, FormattedMessage } from 'umi'
 
 import { ConnectState } from '@/models/connect'
 import { LoginRequestParams } from '@/services/interface'
@@ -96,7 +96,7 @@ const Login: React.FC<LoginProps> = (props) => {
               htmlType="submit"
               shape="round"
             >
-              登陆
+              <FormattedMessage id="common.login" />
             </Button>
           </Form.Item>
         </Form>
