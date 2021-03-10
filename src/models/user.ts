@@ -57,18 +57,23 @@ const UserModel: UserModelType = {
 
       const { code, msg, ...restRes } = response
       if (code) {
-        message.error(msg)
+        const codeMaps = {
+          '17': '图形码有误，请确认',
+          '18': '用户名或者密码不正确'
+        }
+        message.error(codeMaps[code] || msg || '未知错误')
         return response
       } else {
         yield put({
           type: 'saveCurrentUser',
           payload: restRes
         })
-
-        const urlParams = new URL(window.location.href)
-        const params = getPageQuery()
+        
         message.success('登录成功！')
-        let { redirect } = params as { redirect: string }
+        
+        // const urlParams = new URL(window.location.href)
+        // const params = getPageQuery()
+        // let { redirect } = params as { redirect: string }
 
         // if (redirect) {
         //   const redirectUrlParams = new URL(redirect)

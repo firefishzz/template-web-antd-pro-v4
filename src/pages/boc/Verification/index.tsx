@@ -29,7 +29,17 @@ const Verification: React.FC<any> = (props) => {
           setCouponList(couponList)
           setCurrentCouponNo(couponList.length === 1 ? couponList[0].itemNo : '')
         } else {
-          message.error(msg)
+          const codeMaps = {
+            '15': '未查询到当前券码，请重新输入。',
+            '23': '券码已核销，请重新输入。',
+            '24': '券码已取消，请重新输入。',
+            '25': '券码未领取，请重新输入。'
+          }
+          code !== '16' &&
+            Modal.error({
+              okText: '确定',
+              content: codeMaps[code] || msg
+            })
         }
       })
       .catch((err) => {
@@ -67,7 +77,19 @@ const Verification: React.FC<any> = (props) => {
             message.success('核销成功')
             close()
           } else {
-            message.error(msg)
+            close()
+            const codeMaps = {
+              '15': '未查询到当前券码，请重新输入。',
+              '19': '券码已过期，请重新输入。',
+              '23': '券码已核销，请重新输入。',
+              '24': '券码已取消，请重新输入。',
+              '25': '券码未领取，请重新输入。'
+            }
+            code !== '16' &&
+              Modal.error({
+                okText: '确定',
+                content: codeMaps[code] || msg
+              })
           }
         })
       }
@@ -91,7 +113,7 @@ const Verification: React.FC<any> = (props) => {
             {couponList.map((item: any, index: number) => {
               return (
                 <Radio key={index} style={radioStyle} value={item.itemNo}>
-                  {item.itemNo}
+                  {item.itemName}
                 </Radio>
               )
             })}
@@ -112,7 +134,7 @@ const Verification: React.FC<any> = (props) => {
             onFinishFailed={onFinishFailed}
           >
             <Form.Item name="code" rules={[{ required: true, message: '请输入券码' }]}>
-              <Input placeholder="请输入券码" />
+              <Input maxLength={10} placeholder="请输入券码" />
             </Form.Item>
 
             <Form.Item>

@@ -40,7 +40,8 @@ export default defineConfig({
     'primary-color': defaultSettings.primaryColor,
     'btn-primary-bg': '#dc1320',
     'btn-default-color': '#dc1320',
-    'btn-default-border': '#dc1320'
+    'btn-default-border': '#dc1320',
+    'radio-dot-color': '#dc1320',
   },
   title: false,
   ignoreMomentLocale: true,

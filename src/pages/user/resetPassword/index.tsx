@@ -29,7 +29,10 @@ const ResetPassword: React.FC = (props) => {
           message.success('重置成功')
           history.replace('/user/login')
         } else {
-          message.error(msg)
+          const codeMaps = {
+            '18': '用户名或者密码不正确'
+          }
+          message.error(codeMaps[code] || msg || '未知错误')
         }
       })
       .catch((err) => {
@@ -49,11 +52,22 @@ const ResetPassword: React.FC = (props) => {
       <div className={styles.formWrap}>
         <Form form={form} name="basic" onFinish={onFinish} onFinishFailed={onFinishFailed}>
           <Form.Item name="userName" rules={[{ required: true, message: '请输入用户名' }]}>
-            <Input maxLength={64} placeholder="请输入用户名" />
+            <Input maxLength={10} placeholder="请输入用户名" />
           </Form.Item>
 
-          <Form.Item name="oldPassword" rules={[{ required: true, message: '请输入原密码' }]}>
-            <Input.Password maxLength={64} visibilityToggle={false} placeholder="请输入原密码" />
+          <Form.Item
+            name="oldPassword"
+            rules={[
+              { required: true, message: '请输入原密码' },
+              {
+                max: 8,
+                min: 8,
+                type: 'string',
+                message: '请输入8位密码'
+              }
+            ]}
+          >
+            <Input.Password maxLength={8} placeholder="请输入原密码" />
           </Form.Item>
 
           <Form.Item
@@ -62,12 +76,13 @@ const ResetPassword: React.FC = (props) => {
               { required: true, message: '请输入新密码' },
               {
                 min: 8,
+                max: 8,
                 type: 'string',
-                message: '密码最少为8位'
+                message: '请输入8位密码'
               }
             ]}
           >
-            <Input.Password maxLength={64} visibilityToggle={false} placeholder="请输入新密码" />
+            <Input.Password maxLength={8} placeholder="请输入新密码" />
           </Form.Item>
 
           <Form.Item
@@ -77,20 +92,21 @@ const ResetPassword: React.FC = (props) => {
               { required: true, message: '请输入新密码' },
               {
                 min: 8,
+                max: 8,
                 type: 'string',
-                message: '密码最少为8位'
+                message: '请输入8位密码'
               },
               ({ getFieldValue }) => ({
                 validator(rule, value) {
                   if (!value || getFieldValue('newPassword') === value) {
                     return Promise.resolve()
                   }
-                  return Promise.reject('新密码输入不一致')
+                  return Promise.reject('两次密码输入不一致，请重新输入')
                 }
               })
             ]}
           >
-            <Input.Password maxLength={64} visibilityToggle={false} placeholder="请输入新密码" />
+            <Input.Password maxLength={8} placeholder="请输入新密码" />
           </Form.Item>
 
           <Form.Item>
@@ -102,7 +118,7 @@ const ResetPassword: React.FC = (props) => {
               htmlType="submit"
               shape="round"
             >
-              Submit
+              重置
             </Button>
           </Form.Item>
         </Form>

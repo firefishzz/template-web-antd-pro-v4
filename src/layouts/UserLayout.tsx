@@ -1,39 +1,38 @@
-import { MenuDataItem, getMenuData, getPageTitle } from '@ant-design/pro-layout';
-import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { Link, SelectLang, useIntl, ConnectProps, connect, FormattedMessage } from 'umi';
-import React from 'react';
-import { ConnectState } from '@/models/connect';
-import logo from '@/assets/logo_en_white.png';
-import styles from './UserLayout.less';
+import { MenuDataItem, getMenuData, getPageTitle } from '@ant-design/pro-layout'
+import { Helmet, HelmetProvider } from 'react-helmet-async'
+import { Link, SelectLang, useIntl, ConnectProps, connect, FormattedMessage } from 'umi'
+import React from 'react'
+import { ConnectState } from '@/models/connect'
+import logo from '@/assets/logo_en_white.png'
+import styles from './UserLayout.less'
 
 export interface UserLayoutProps extends Partial<ConnectProps> {
   breadcrumbNameMap: {
-    [path: string]: MenuDataItem;
-  };
+    [path: string]: MenuDataItem
+  }
 }
 
 const UserLayout: React.FC<UserLayoutProps> = (props) => {
   const {
     route = {
-      routes: [],
-    },
-  } = props;
-  const { routes = [] } = route;
+      routes: []
+    }
+  } = props
+  const { routes = [] } = route
   const {
     children,
     location = {
-      pathname: '',
-    },
-  } = props;
-  const { formatMessage } = useIntl();
-  const { breadcrumb } = getMenuData(routes);
+      pathname: ''
+    }
+  } = props
+  const { formatMessage } = useIntl()
+  const { breadcrumb } = getMenuData(routes)
   const title = getPageTitle({
     pathname: location.pathname,
     formatMessage,
     breadcrumb,
-    ...props,
-  });
-  console.log('title', title, breadcrumb);
+    ...props
+  })
 
   return (
     <HelmetProvider>
@@ -54,7 +53,7 @@ const UserLayout: React.FC<UserLayoutProps> = (props) => {
         </div>
       </div>
     </HelmetProvider>
-  );
-};
+  )
+}
 
-export default connect(({ settings }: ConnectState) => ({ ...settings }))(UserLayout);
+export default connect(({ settings }: ConnectState) => ({ ...settings }))(UserLayout)

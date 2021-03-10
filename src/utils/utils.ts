@@ -1,25 +1,9 @@
 import { parse } from 'querystring'
 import { JSEncrypt } from 'jsencrypt'
 /* eslint no-useless-escape:0 import/prefer-default-export:0 */
-const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/
+const urlReg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)$/
 
-export const isUrl = (path: string): boolean => reg.test(path)
-
-export const isAntDesignPro = (): boolean => {
-  if (ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION === 'site') {
-    return true
-  }
-  return window.location.hostname === 'preview.pro.ant.design'
-}
-
-// 给官方演示站点用，用于关闭真实开发环境不需要使用的特性
-export const isAntDesignProOrDev = (): boolean => {
-  const { NODE_ENV } = process.env
-  if (NODE_ENV === 'development') {
-    return true
-  }
-  return isAntDesignPro()
-}
+export const isUrl = (path: string): boolean => urlReg.test(path)
 
 export const getPageQuery = () => parse(window.location.href.split('?')[1])
 
@@ -45,7 +29,7 @@ export const frontRsaEncrypt = (plainText: any, cb?: Function) => {
     }
     return plainText
   }
-  
+
   return encryptPlainText // 加密有可能因为二次加密而失败，则把原字符串返回
 }
 
@@ -83,11 +67,11 @@ export const frontRsaDecrypt = (encryptPlain: any, cb?: Function) => {
   const rsa = new JSEncrypt()
   rsa.setPrivateKey(privateKey)
 
-  console.log('encryptPlain', encryptPlain);
-  
+  console.log('encryptPlain', encryptPlain)
+
   const encryptPlainRes = rsa.decrypt(encryptPlain)
-  console.log('encryptPlainRes', encryptPlainRes);
-  
+  console.log('encryptPlainRes', encryptPlainRes)
+
   if (!encryptPlainRes) {
     if (cb) {
       cb()
@@ -134,4 +118,25 @@ export const encryptPassword = (plainText: any, cb?: Function) => {
     return plainText
   }
   return encryptPlainText // 加密有可能因为二次加密而失败，则把原字符串返回
+}
+
+export const openDownloadDialog = (url: any, saveName?: string) => {
+  const isBlob = typeof url === 'object' && url instanceof Blob
+  //  支持IE和edge浏览器且为文件流下载
+  if (window.navigator.msSaveBlob && isBlob) {
+    window.navigator.msSaveBlob(url, saveName)
+    return
+  }
+
+  if (isBlob) {
+    url = URL.createObjectURL(url) // 创建blob地址
+  }
+  const aLink = document.createElement('a')
+  aLink.href = url
+  saveName && (aLink.download = saveName)
+
+  console.log('saveName', saveName, aLink)
+
+  aLink.click()
+  aLink.remove()
 }

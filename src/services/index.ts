@@ -61,3 +61,17 @@ export async function addCoupon(params: AddCouponReq) {
     data: params
   })
 }
+
+export async function batchDownload() {
+  return request('/plat/download', {
+    method: 'GET',
+    responseType: 'blob',
+    getResponse: true
+  })
+}
+export async function batchImport(params: any) {
+  return request('/plat/upload', {
+    method: 'POST',
+    data: params
+  })
+}

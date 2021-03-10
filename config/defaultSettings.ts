@@ -1,8 +1,6 @@
-import { Settings as ProSettings } from '@ant-design/pro-layout';
+import { Settings as ProSettings } from '@ant-design/pro-layout'
 
-type DefaultSettings = Partial<ProSettings> & {
-  pwa: boolean;
-};
+type DefaultSettings = Partial<ProSettings>
 
 const proSettings: DefaultSettings = {
   navTheme: 'dark',
@@ -13,11 +11,10 @@ const proSettings: DefaultSettings = {
   fixedHeader: false,
   fixSiderbar: true,
   colorWeak: false,
-  title: 'Ant Design Pro',
-  pwa: false,
-  iconfontUrl: '',
-};
+  title: false,
+  iconfontUrl: ''
+}
 
-export type { DefaultSettings };
+export type { DefaultSettings }
 
-export default proSettings;
+export default proSettings

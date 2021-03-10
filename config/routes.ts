@@ -4,12 +4,12 @@
     component: '../layouts/UserLayout',
     routes: [
       {
-        name: 'login',
+        name: '登陆',
         path: '/user/login',
         component: './user/login'
       },
       {
-        name: 'resetPassword',
+        name: '重置密码',
         path: '/user/resetPassword',
         component: './user/resetPassword'
       }
@@ -30,31 +30,15 @@
           {
             path: '/boc/verification',
             name: '查询&核销',
-            icon: 'smile',
+            icon: 'fileSearch',
             component: './boc/Verification'
           },
           {
             path: '/boc/create-coupon',
             name: '生成券码',
-            icon: 'smile',
+            icon: 'gold',
             authority: ['in'],
             component: './boc/CreateCoupon'
-          },
-          {
-            path: '/admin',
-            name: 'admin',
-            icon: 'crown',
-            component: './Admin',
-            authority: ['admin'],
-            routes: [
-              {
-                path: '/admin/sub-page',
-                name: 'sub-page',
-                icon: 'smile',
-                component: './Welcome',
-                authority: ['admin']
-              }
-            ]
           },
           {
             component: './404'

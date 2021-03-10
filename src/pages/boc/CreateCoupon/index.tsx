@@ -1,8 +1,9 @@
 import React, { useState, useRef } from 'react'
 import { PageContainer } from '@ant-design/pro-layout'
-import { Card, Form, Input, InputNumber, Button, Radio, DatePicker, message } from 'antd'
+import { Card, Form, Input, InputNumber, Button, Radio, DatePicker, Upload, message } from 'antd'
 import moment from 'moment'
-import { queryMerchant, addCoupon } from '@/services/index'
+import { queryMerchant, addCoupon, batchDownload, batchImport } from '@/services/index'
+import { openDownloadDialog } from '@/utils/utils'
 import styles from './index.less'
 
 const { RangePicker } = DatePicker
@@ -46,7 +47,7 @@ const CreateCoupon: React.FC<any> = (props) => {
           setSubmitting(false)
         })
     } else {
-      message.warning('该功能开发中')
+      // message.warning('该功能开发中')
     }
   }
 
@@ -58,12 +59,38 @@ const CreateCoupon: React.FC<any> = (props) => {
     const { createType, timeType } = values
     createType && setCurrentCreateType(createType)
     timeType && setCurrentTimeType(timeType)
-    console.log('createType', createType, timeType)
   }
 
   const handleDownload = () => {
-    message.warning('该功能开发中')
+    batchDownload().then((res) => {
+      const { data, response } = res
+      const downLoadFileName = (response as any).headers
+        .get('content-disposition')
+        .split('filename=')[1]
+
+      openDownloadDialog(data, decodeURIComponent(downLoadFileName).replace(/\"/g, ''))
+    })
   }
+
+  const uploadProps = {
+    customRequest: ({ file }: any) => {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('fileType', 'xlsx')
+
+      batchImport(formData).then((res) => {
+        console.log('res', res)
+        const { code, msg } = res
+        if (code === '00') {
+          message.success('批导成功')
+        } else {
+          message.error(msg)
+        }
+      })
+    },
+    fileList: []
+  }
+
   return (
     <PageContainer>
       <Card>
@@ -81,38 +108,6 @@ const CreateCoupon: React.FC<any> = (props) => {
             onFinishFailed={onFinishFailed}
           >
             <Form.Item
-              label="商品编号"
-              name="merchantNo"
-              validateFirst={true}
-              rules={[
-                { required: true, message: '请输入商品编号' },
-                ({ getFieldValue, setFieldsValue }) => ({
-                  validator(rule, value) {
-                    return new Promise((resolve, reject) => {
-                      queryMerchant({ itemNo: value }).then((res) => {
-                        const { code, item } = res
-                        if (code === '00') {
-                          const { name } = item
-                          name && setFieldsValue({ merchantName: name })
-                          resolve()
-                        } else if (code === '15') {
-                          setFieldsValue({ merchantName: '' })
-                          reject('未查询到该商品编号')
-                        }
-                      })
-                    })
-                  }
-                })
-              ]}
-            >
-              <Input maxLength={8} placeholder="商品编号" />
-            </Form.Item>
-
-            <Form.Item label="商品名称" name="merchantName">
-              <Input disabled placeholder="商品名称" />
-            </Form.Item>
-
-            <Form.Item
               label="券码创建方式"
               name="createType"
               rules={[{ required: true, message: '请输入商品名称' }]}
@@ -125,6 +120,38 @@ const CreateCoupon: React.FC<any> = (props) => {
 
             {currentCreateType === 'system' && (
               <>
+                <Form.Item
+                  label="商品编号"
+                  name="merchantNo"
+                  validateFirst={true}
+                  rules={[
+                    { required: true, message: '输入商品编号' },
+                    ({ getFieldValue, setFieldsValue }) => ({
+                      validator(rule, value) {
+                        return new Promise((resolve, reject) => {
+                          queryMerchant({ itemNo: value }).then((res) => {
+                            const { code, item } = res
+                            if (code === '00') {
+                              const { name } = item
+                              name && setFieldsValue({ merchantName: name })
+                              resolve()
+                            } else if (code === '15') {
+                              setFieldsValue({ merchantName: '' })
+                              reject('请输入正确的商品编号')
+                            }
+                          })
+                        })
+                      }
+                    })
+                  ]}
+                >
+                  <Input maxLength={8} placeholder="商品编号" />
+                </Form.Item>
+
+                <Form.Item label="商品名称" name="merchantName">
+                  <Input disabled placeholder="商品名称" />
+                </Form.Item>
+
                 <Form.Item
                   label="券码数量"
                   name="couponNum"
@@ -160,11 +187,11 @@ const CreateCoupon: React.FC<any> = (props) => {
 
                 {currentTimeType === 'fixed' && (
                   <Form.Item label="固定时间">
-                    创建后
+                    领取后
                     <Form.Item
                       name="fixedDays"
                       noStyle
-                      rules={[{ required: true, message: '请输入固定时间' }]}
+                      rules={[{ required: true, message: '请输入券码有效期' }]}
                     >
                       <InputNumber
                         min={1}
@@ -188,9 +215,17 @@ const CreateCoupon: React.FC<any> = (props) => {
               </>
             )}
             <Form.Item>
-              <Button loading={submitting} type="primary" htmlType="submit">
-                {currentCreateType === 'system' ? '确定' : '点击上传'}
-              </Button>
+              {currentCreateType === 'system' ? (
+                <Button loading={submitting} type="primary" htmlType="submit">
+                  确定
+                </Button>
+              ) : (
+                <Upload {...uploadProps}>
+                  <Button loading={submitting} type="primary">
+                    点击上传
+                  </Button>
+                </Upload>
+              )}
             </Form.Item>
           </Form>
         </div>

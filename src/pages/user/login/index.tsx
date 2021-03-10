@@ -19,10 +19,7 @@ const Login: React.FC<LoginProps> = (props) => {
   const [captchaToken, handleCaptchaToken] = useState<string>('')
   const captchaRef: any = useRef({})
 
-  console.log(REACT_APP_CIL_ENV)
-
   const onFinish = (values: LoginRequestParams) => {
-    console.log('Success:', values)
     const param = {
       token: captchaToken,
       password: encryptPassword(values.password),
@@ -45,7 +42,6 @@ const Login: React.FC<LoginProps> = (props) => {
   }
 
   const getCurrentCaptcha = (value: any) => {
-    console.log('getCurrentCaptcha', value)
     handleCaptchaToken(value.token)
   }
 
@@ -61,11 +57,22 @@ const Login: React.FC<LoginProps> = (props) => {
       <div className={styles.loginForm}>
         <Form name="basic" onFinish={onFinish} onFinishFailed={onFinishFailed}>
           <Form.Item name="userName" rules={[{ required: true, message: '请输入用户名' }]}>
-            <Input placeholder="请输入用户名" />
+            <Input maxLength={10} placeholder="请输入用户名" />
           </Form.Item>
 
-          <Form.Item name="password" rules={[{ required: true, message: '请输入密码' }]}>
-            <Input.Password placeholder="请输入密码" />
+          <Form.Item
+            name="password"
+            rules={[
+              { required: true, message: '请输入密码' },
+              {
+                max: 8,
+                min: 8,
+                type: 'string',
+                message: '请输入8位密码'
+              }
+            ]}
+          >
+            <Input.Password maxLength={8} placeholder="请输入密码" />
           </Form.Item>
 
           <Form.Item name="captcha" rules={[{ required: true, message: '请输入验证码' }]}>
@@ -89,7 +96,7 @@ const Login: React.FC<LoginProps> = (props) => {
               htmlType="submit"
               shape="round"
             >
-              Submit
+              登陆
             </Button>
           </Form.Item>
         </Form>
