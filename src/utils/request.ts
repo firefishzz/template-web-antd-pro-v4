@@ -4,7 +4,7 @@
  */
 import { extend, RequestOptionsInit } from 'umi-request'
 import { notification } from 'antd'
-import { history } from 'umi'
+import { history, getDvaApp } from 'umi'
 import { stringify } from 'querystring'
 
 const codeMessage = {
@@ -46,6 +46,16 @@ const responseInterCeptors = async (response: Response, options: RequestOptionsI
   }
 }
 
+const requestInterCeptors = (url: any, options: RequestOptionsInit) => {
+  const headers = {
+    Authorization: `11111`
+  }
+  console.log('getDvaApp', getDvaApp()._store.getState())
+  return {
+    url,
+    options: { ...options, headers }
+  }
+}
 /**
  * 异常处理程序
  */
@@ -78,4 +88,5 @@ const request = extend({
   credentials: 'include' // 默认请求是否带上cookie
 })
 request.interceptors.response.use(responseInterCeptors)
+request.interceptors.request.use(requestInterCeptors)
 export default request

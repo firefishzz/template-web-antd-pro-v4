@@ -52,7 +52,7 @@ const CaptchaInput: React.FC<CaptchaInputProps> = (props) => {
   }, [])
 
   useImperativeHandle(innerRef, () => ({
-    // changeVal 就是暴露给父组件的方法
+    // refreshCaptcha 就是暴露给父组件的方法
     refreshCaptcha: handleGetCaptcha
   }))
 
