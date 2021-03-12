@@ -3,7 +3,7 @@ import { Settings as ProSettings } from '@ant-design/pro-layout'
 type DefaultSettings = Partial<ProSettings>
 
 const proSettings: DefaultSettings = {
-  navTheme: 'dark',
+  navTheme: 'light',
   // 拂晓蓝
   primaryColor: '#1890ff',
   layout: 'side',

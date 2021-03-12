@@ -101,6 +101,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
       formatMessage={formatMessage}
       {...props}
       {...settings}
+      collapsedButtonRender={false}
       onCollapse={handleMenuCollapse}
       onMenuHeaderClick={() => history.push('/')}
       menuItemRender={(menuItemProps, defaultDom) => {
